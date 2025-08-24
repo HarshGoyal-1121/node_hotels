@@ -10,7 +10,6 @@ app.get('/',(req,res)=>{
 });
 app.use('/person',personRoutes);
 app.use('/menuitem',menuItemRoutes);
-//  comment added for testing purpose
 app.listen(3000,()=>{
     console.log("server started at port 3000");
 });
