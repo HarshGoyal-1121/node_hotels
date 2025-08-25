@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express=require('express');
 const app=express();  
 const db=require('./db');
@@ -10,6 +11,7 @@ app.get('/',(req,res)=>{
 });
 app.use('/person',personRoutes);
 app.use('/menuitem',menuItemRoutes);
-app.listen(3000,()=>{
+const PORT=process.env.PORT || 3000;
+app.listen(PORT,()=>{
     console.log("server started at port 3000");
 });

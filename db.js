@@ -1,6 +1,7 @@
+require("dotenv").config();
 const mongoose=require('mongoose');
-const mongoUrl="mongodb://127.0.0.1:27017/princeDB";
-mongoose.connect(mongoUrl);
+const mongo_url=process.env.MONGO_URL;
+mongoose.connect(mongo_url);
 const db=mongoose.connection;
 
 db.on('connected',()=>{
