@@ -5,7 +5,10 @@ const db=require('./db');
 const bodyParser=require('body-parser');
 const personRoutes=require('./routes/personRoutes');
 const menuItemRoutes=require('./routes/menuItemRoutes');
+const passport=require('./auth');
 app.use(bodyParser.json());
+app.use(passport.initialize());
+const passportAuth=passport.authenticate('local',{session:false});
 app.get('/',(req,res)=>{
     res.send("Welcome to the Restaurant Management System API");
 });

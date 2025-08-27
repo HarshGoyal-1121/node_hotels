@@ -1,17 +1,48 @@
 const express=require('express');
 const router=express.Router();
 const Person = require('./../models/Person.js');
-router.post('/',async(req,res)=>{
+const {jwtmiddleware,gentoken}=require('./../jwt');
+router.post('/signup',async(req,res)=>{
     try{
         const newPerson=new Person(req.body);
         const savedPerson=await newPerson.save();
-        res.status(201).json(savedPerson);
+        const token=gentoken({id:savedPerson._id,username:savedPerson.username});
+        //console.log(token);
+        res.status(201).json({person:savedPerson,token:token});
     }catch(err){
         console.log(err);
         res.status(400).json({error:err.message});
     }
 });
-router.get('/',async (req,res)=>{
+router.post('/login',async(req,res)=>{
+    try{
+        const{username,password}=req.body;
+        const person=await Person.findOne({username});
+        if(!person){
+            return res.status(401).json({error:"Invalid username or password"});
+        }
+        const isMatch=await person.ComparePassword(password);
+        if(!isMatch){
+            return res.status(401).json({error:"Invalid username or password"});
+        }
+        const token=gentoken({id:person._id,username:person.username});
+        res.status(200).json({person,token});
+    }catch(err){
+        console.log(err);
+        res.status(500).json({error:err.message});
+    }
+})
+router.get('/profile',jwtmiddleware,async (req,res)=>{
+    try{
+        const userid=req.user.id;
+        const person=await Person.findById(userid);
+        res.status(200).json(person);
+    }catch(err){
+        console.log(err);
+        res.status(500).json({error:err.message});
+    }
+})
+router.get('/',jwtmiddleware,async (req,res)=>{
     try{
         const data=await Person.find();
         res.status(200).json(data);
